@@ -30,4 +30,4 @@ Windows Server 2022 · Active Directory · DNS · DHCP · Group Policy · NTFS p
 
 ---
 
-**Kudzaishe Rutsinga** · M.S. Cybersecurity, Yeshiva University · [LinkedIn](https://www.linkedin.com/in/your-profile)
+**Kudzaishe Rutsinga** · M.S. Cybersecurity, Yeshiva University · [LinkedIn](https://www.linkedin.com/in/kudzaishe-rutsinga/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3B2CVLEU7NRhGPh6nz9uH3kg%3D%3D)
