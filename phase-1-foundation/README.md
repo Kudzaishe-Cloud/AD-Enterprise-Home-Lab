@@ -227,5 +227,5 @@ Windows Server 2022 · Active Directory Domain Services · forest and domain des
 
 ---
 
-**Next → Phase 2: Identity Structure** *(coming soon)*
+**Next → [Phase 2: Identity Structure](../phase-2-identity/)**
 Organizational Units, role-based security groups (AGDLP), bulk user provisioning from CSV, and a separate privileged admin account.

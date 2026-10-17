@@ -14,7 +14,7 @@
 ![GRC](https://img.shields.io/badge/GRC-NIST_800--53_and_CIS_v8-8250DF?style=for-the-badge)
 
 ![Lab](https://img.shields.io/badge/Lab_build-Complete-2EA043?style=flat-square)
-![Docs](https://img.shields.io/badge/Write--ups-1_of_5_published-D29922?style=flat-square)
+![Docs](https://img.shields.io/badge/Write--ups-2_of_5_published-D29922?style=flat-square)
 
 <br/>
 
@@ -74,9 +74,9 @@ The full lab is built and tested. Each phase's write-up is published as it's fin
 Isolated network, domain controller promotion, DNS zones and forwarders, DHCP authorization and scopes.
 `▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
 
-**Phase 2 · Identity structure**
+**Phase 2 · [Identity structure](phase-2-identity/)** ✅
 Departmental OUs, AGDLP security groups, bulk user provisioning from CSV, and privileged account separation.
-`▰▰▰▰▰▰▰▱▱▱` **70%** · Built · Write-up in progress
+`▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
 
 **Phase 3 · Endpoint integration and Group Policy**
 Domain-joined Windows 11 workstation, password and lockout policy, fine-grained password policy, and workstation hardening.
@@ -161,9 +161,13 @@ Joiner, mover and leaver processes, helpdesk delegation, lockout recovery, delet
 ```
 AD-Enterprise-Home-Lab/
 ├── README.md                     ← you are here
-└── phase-1-foundation/
-    ├── README.md                 ← full Phase 1 write-up
-    └── screenshots/              ← build evidence
+├── phase-1-foundation/
+│   ├── README.md                 ← lab foundation and domain controller
+│   └── screenshots/
+└── phase-2-identity/
+    ├── README.md                 ← identity structure
+    ├── scripts/                  ← PowerShell scripts and users.csv
+    └── screenshots/
 ```
 
 New phase folders are added as each write-up is published.
