@@ -14,7 +14,7 @@
 ![GRC](https://img.shields.io/badge/GRC-NIST_800--53_and_CIS_v8-8250DF?style=for-the-badge)
 
 ![Lab](https://img.shields.io/badge/Lab_build-Complete-2EA043?style=flat-square)
-![Docs](https://img.shields.io/badge/Write--ups-2_of_5_published-D29922?style=flat-square)
+![Docs](https://img.shields.io/badge/Write--ups-3_of_5_published-D29922?style=flat-square)
 
 <br/>
 
@@ -78,9 +78,9 @@ Isolated network, domain controller promotion, DNS zones and forwarders, DHCP au
 Departmental OUs, AGDLP security groups, bulk user provisioning from CSV, and privileged account separation.
 `▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
 
-**Phase 3 · Endpoint integration and Group Policy**
+**Phase 3 · [Endpoint integration and Group Policy](phase-3-group-policy/)** ✅
 Domain-joined Windows 11 workstation, password and lockout policy, fine-grained password policy, and workstation hardening.
-`▰▰▰▰▰▰▰▱▱▱` **70%** · Built · Write-up in progress
+`▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
 
 **Phase 4 · Access control**
 Group-based NTFS and share permissions following the AGDLP model, proven with least-privilege access tests.
@@ -164,9 +164,13 @@ AD-Enterprise-Home-Lab/
 ├── phase-1-foundation/
 │   ├── README.md                 ← lab foundation and domain controller
 │   └── screenshots/
-└── phase-2-identity/
-    ├── README.md                 ← identity structure
-    ├── scripts/                  ← PowerShell scripts and users.csv
+├── phase-2-identity/
+│   ├── README.md                 ← identity structure
+│   ├── scripts/                  ← PowerShell scripts and users.csv
+│   └── screenshots/
+└── phase-3-group-policy/
+    ├── README.md                 ← endpoint integration and Group Policy
+    ├── scripts/                  ← domain join, password policy and GPO scripts
     └── screenshots/
 ```
 

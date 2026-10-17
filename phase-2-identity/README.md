@@ -208,4 +208,4 @@ Active Directory OU design · RBAC and the AGDLP model · security group scopes 
 
 ---
 
-**← [Phase 1: Lab foundation](../phase-1-foundation/)** · **Next → Phase 3: Endpoint integration and Group Policy** *(coming soon)*
+**← [Phase 1: Lab foundation](../phase-1-foundation/)** · **Next → [Phase 3: Endpoint integration and Group Policy](../phase-3-group-policy/)**
