@@ -1,200 +1,214 @@
-<div align="center">
+# Phase 3 – Endpoint Integration and Group Policy
 
-# Enterprise Active Directory Home Lab
+**Enterprise Active Directory Home Lab · Phase 3 of 5**
 
-### Building a production-style Windows identity environment from the ground up
+In this phase I joined a **Windows 11 Enterprise workstation (CLIENT01)** to the domain and used **Group Policy** to enforce security from one central place: a domain-wide **password and lockout policy**, a stricter **fine-grained policy for admins**, **workstation hardening** (USB block, screen lock, logon banner), and a **Control Panel restriction** for every department except IT.
 
-*Domain controller · DNS · DHCP · Group Policy · Access control · Identity lifecycle · Auditing · GRC*
-
-<br/>
-
-![Windows Server 2022](https://img.shields.io/badge/Windows_Server-2022-0078D4?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPHBhdGggIGQ9Ik02Ny4zMjggNjcuMzMxaDYwLjY2OVYxMjhINjcuMzI4em0tNjcuMzI1IDBoNjAuNjY5VjEyOEguMDAzek02Ny4zMjggMGg2MC42Njl2NjAuNjY5SDY3LjMyOHpNLjAwMyAwaDYwLjY2OXY2MC42NjlILjAwM3oiLz48L3N2Zz4K)
-![Active Directory](https://img.shields.io/badge/Active_Directory-AD_DS-1F6FEB?style=for-the-badge)
-![PowerShell](https://img.shields.io/badge/PowerShell-Automation-5391FE?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWw6c3BhY2U9InByZXNlcnZlIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTI0LjkxMiAxOS4zNThjLS45NjItMS4xOTktMi40MjItMS44NTgtNC4xMTEtMS44NThoLTkyLjYxYy0zLjM5NyAwLTYuNjY1IDIuNjQyLTcuNDQ0IDYuMDE1TDIuMTYyIDEwNC4wMjJjLS4zOTYgMS43MTEtLjA1OCAzLjM5NC45MjYgNC42MTkuOTYzIDEuMTk5IDIuNDIzIDEuODU4IDQuMTExIDEuODU4di4wMDFIOTkuODFjMy4zOTYgMCA2LjY2NS0yLjY0MyA3LjQ0My02LjAxNmwxOC41ODYtODAuNTA4Yy4zOTUtMS43MTEuMDU3LTMuMzk1LS45MjctNC42MTh6bS05OC41ODkgNzcuMTdjLTEuNzQzLTIuMzk3LTEuMzIzLTUuNjczLjk0LTcuMzE4bDM3LjM3OS0yNy4wNjd2LS41NTZMNDEuMTU3IDM2LjYwM2MtMS45MTYtMi4wMzgtMS43MTYtNS4zMzMuNDQ1LTcuMzYxIDIuMTYyLTIuMDI3IDUuNDY2LTIuMDE5IDcuMzgyLjAxOWwyOC4xOCAyOS45NzljMS42IDEuNzAyIDEuNzE4IDQuMjc5LjQ1NyA2LjI2NC0uMzg0Ljc3NC0xLjE4MiAxLjYyOC0yLjU5MyAyLjYxOGwtNDEuNDUgMjkuNzY5Yy0yLjI2MyAxLjY0NC01LjUxMiAxLjAzNC03LjI1NS0xLjM2M3ptNTkuNTQzLjUzOEg2My41MzJjLTIuNTk3IDAtNC43MDItMi4wODItNC43MDItNC42NXMyLjEwNS00LjY1IDQuNzAyLTQuNjVoMjIuMzMzYzIuNTk3IDAgNC43MDIgMi4wODIgNC43MDIgNC42NXMtMi4xMDQgNC42NS00LjcwMSA0LjY1eiIgY2xpcC1ydWxlPSJldmVub2RkIi8%2BPC9zdmc%2BCg%3D%3D)
-![GRC](https://img.shields.io/badge/GRC-NIST_800--53_and_CIS_v8-8250DF?style=for-the-badge)
-
-![Lab](https://img.shields.io/badge/Lab_build-Complete-2EA043?style=flat-square)
-![Docs](https://img.shields.io/badge/Write--ups-3_of_5_published-D29922?style=flat-square)
-
-<br/>
-
-<a href="#about-this-project"><img src="https://img.shields.io/badge/About-30363D?style=for-the-badge" alt="About"/></a>
-<a href="#architecture"><img src="https://img.shields.io/badge/Architecture-30363D?style=for-the-badge" alt="Architecture"/></a>
-<a href="#the-five-phases"><img src="https://img.shields.io/badge/Phases-30363D?style=for-the-badge" alt="Phases"/></a>
-<a href="#highlights"><img src="https://img.shields.io/badge/Highlights-30363D?style=for-the-badge" alt="Highlights"/></a>
-<a href="#skills-demonstrated"><img src="https://img.shields.io/badge/Skills-30363D?style=for-the-badge" alt="Skills"/></a>
-<a href="#open-to-opportunities"><img src="https://img.shields.io/badge/Contact-30363D?style=for-the-badge" alt="Contact"/></a>
-
-</div>
+Every setting was verified on the client with `gpresult`, and the troubleshooting along the way is documented below.
 
 ---
 
-## About this project
+## Contents
 
-I've managed Active Directory in real production environments, with real users, groups and access requests. This lab is a deliberate **back-to-basics rebuild**: every layer of an enterprise Windows identity stack built from scratch on one laptop, with the reasoning behind each decision documented along the way.
-
-It mirrors what IT and IAM teams handle every day:
-
-- **Stand up** a domain with the core network services it depends on
-- **Structure** identities by department, role and privilege level
-- **Enforce** security policy on every endpoint
-- **Control** who can reach which data, and prove it
-- **Manage** the full joiner–mover–leaver lifecycle, with an audit trail for every change
+1. [Key terms](#key-terms)
+2. [Design](#design)
+3. [Build steps](#build-steps)
+4. [Verification](#verification)
+5. [Troubleshooting](#troubleshooting)
+6. [Scripts](#scripts)
+7. [Skills demonstrated](#skills-demonstrated)
 
 ---
 
-## Architecture
+## Key terms
+
+| Term | Meaning |
+|---|---|
+| **Domain join** | Adding a computer to the domain so it trusts the domain controller for logons and receives Group Policy. |
+| **Group Policy Object (GPO)** | A collection of settings pushed from the domain controller to users and computers. |
+| **GPO link** | A GPO only takes effect where it is **linked**: a site, the domain, or an OU. Objects inside that location receive it. |
+| **Computer vs User Configuration** | Computer settings apply to the machine at startup, whatever user logs in. User settings follow the user at logon, on any domain computer. |
+| **Default Domain Policy** | The built-in GPO linked to the whole domain. It holds the domain-wide password and lockout policy. |
+| **Fine-Grained Password Policy (PSO)** | A Password Settings Object that applies different password rules to specific users or groups, overriding the domain policy. |
+| **Account lockout** | Temporarily disabling logon after too many wrong passwords, to slow down password-guessing attacks. |
+| **gpupdate / gpresult** | `gpupdate /force` fetches policy immediately. `gpresult` reports which GPOs applied, which were filtered out, and why. |
+| **RSoP** | Resultant Set of Policy: the final combined result of every GPO that applies to a user and computer. `gpresult` shows it. |
+| **APIPA (169.254.x.x)** | The address Windows assigns itself when it can't reach a DHCP server. A sign of a network or DHCP problem. |
+| **TPM 2.0 / Secure Boot / UEFI** | Hardware security features Windows 11 requires. In VirtualBox they are enabled per VM. |
+
+---
+
+## Design
+
+### Where each policy applies
 
 ```mermaid
-flowchart LR
-    Internet((Internet))
-    NAT["NAT Network · CorpLab<br/>10.0.10.0/24"]
-    DC01["DC01 · Windows Server 2022<br/>AD DS · DNS · DHCP<br/>10.0.10.10"]
-    CLIENT["CLIENT01 · Windows 11<br/>Domain-joined workstation<br/>DHCP 10.0.10.100+"]
-
-    Internet --- NAT
-    NAT --- DC01
-    NAT --- CLIENT
-    CLIENT -. "Authentication · DNS · Group Policy" .-> DC01
+flowchart TD
+    D["corp.kudzaishelab.local<br/>Default Domain Policy<br/>password and lockout rules"]
+    PSO["Admins-PSO<br/>stricter rules for Domain Admins"]
+    WS["Workstations OU<br/>WS - Workstation Hardening"]
+    U["Finance · HR · Sales OUs<br/>USR - Restrict Control Panel"]
+    IT["IT OU<br/>no restriction"]
+    C["CLIENT01"]
+    D --> WS
+    D --> U
+    D --> IT
+    D -.-> PSO
+    WS --> C
 ```
 
-<div align="center">
+| GPO | Linked to | Type | What it enforces |
+|---|---|---|---|
+| **Default Domain Policy** | Whole domain | Computer | 12+ character complex passwords, 90-day max age, 24-password history, lockout after 5 attempts for 15 minutes |
+| **Admins-PSO** *(fine-grained policy)* | Domain Admins group | Password policy | 15+ character passwords, lockout after 3 attempts |
+| **WS - Workstation Hardening** | Workstations OU | Computer | All removable storage blocked, screen lock after 10 minutes, "Authorized Use Only" logon banner |
+| **USR - Restrict Control Panel** | Finance, HR, Sales OUs | User | Control Panel and PC Settings blocked; IT left unrestricted |
 
-**Domain** `corp.kudzaishelab.local` · **Network** `10.0.10.0/24` · **Identities** 20+ users across IT, HR, Finance and Sales
+### CLIENT01
 
-</div>
-
----
-
-## The five phases
-
-The full lab is built and tested. Each phase's write-up is published as it's finished.
-
-**Phase 1 · [Lab foundation and domain controller](phase-1-foundation/)** ✅
-Isolated network, domain controller promotion, DNS zones and forwarders, DHCP authorization and scopes.
-`▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
-
-**Phase 2 · [Identity structure](phase-2-identity/)** ✅
-Departmental OUs, AGDLP security groups, bulk user provisioning from CSV, and privileged account separation.
-`▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
-
-**Phase 3 · [Endpoint integration and Group Policy](phase-3-group-policy/)** ✅
-Domain-joined Windows 11 workstation, password and lockout policy, fine-grained password policy, and workstation hardening.
-`▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
-
-**Phase 4 · Access control**
-Group-based NTFS and share permissions following the AGDLP model, proven with least-privilege access tests.
-`▰▰▰▰▰▰▰▱▱▱` **70%** · Built · Write-up in progress
-
-**Phase 5 · IAM lifecycle and auditing**
-Joiner, mover and leaver processes, helpdesk delegation, lockout recovery, deleted-object restore, and security auditing.
-`▰▰▰▰▰▰▰▱▱▱` **70%** · Built · Write-up in progress
+| Setting | Value |
+|---|---|
+| OS | Windows 11 Enterprise (evaluation) |
+| Hardware | 4 GB RAM · 2 vCPU · 64 GB disk · UEFI · TPM 2.0 · Secure Boot |
+| Network | NAT Network `CorpLab` · address from DC01's DHCP scope |
+| Location in AD | `Corp/Computers/Workstations` |
 
 ---
 
-## Highlights
+## Build steps
 
-- **20 users provisioned in seconds** from a CSV with PowerShell, each placed in the right OU and role group automatically
-- **Least privilege, proven:** Finance can edit its share, HR is denied, and one group change grants HR read-only access, with no folder permissions touched
-- **Six identity scenarios run end to end:** joiner, mover, leaver, helpdesk delegation, account lockout and deleted-user restore
-- **Three Group Policies enforced and verified** with `gpresult`: domain password and lockout rules, workstation hardening, and a departmental Control Panel restriction
-- **Every change leaves evidence:** account creation, group changes, disables and lockouts captured in the Security log (Event IDs 4720, 4728, 4725, 4740)
-- **Real troubleshooting, documented:** a domain controller network profile blocking client DNS, a VM with no attached disk, and policies missing their target OU
+### 1. Build the Windows 11 client
+
+Created CLIENT01 in VirtualBox with **UEFI, TPM 2.0 and Secure Boot** (Windows 11 requirements), attached it to the `CorpLab` network, and installed Windows 11 Enterprise. During setup, **Domain join instead** creates a temporary local account rather than a Microsoft account.
+
+### 2. Confirm networking before joining
+
+A domain join fails if the client can't find the domain through DNS, so this is checked first:
+
+```powershell
+ipconfig /all
+nslookup corp.kudzaishelab.local
+```
+
+The client received `10.0.10.100` from **DC01's DHCP scope**, with DNS `10.0.10.10`, and resolved the domain to the DC.
+
+![CLIENT01 receiving its address from DC01's DHCP scope](screenshots/01-client01-dhcp.png)
+
+### 3. Join the domain and place the computer correctly
+
+Joined through **System Properties → Change → Domain**, using the separate admin account from Phase 2. Then, on DC01, moved CLIENT01 from the default `Computers` **container** into the `Workstations` **OU**, because Group Policy can't be linked to the default container.
+
+```powershell
+Add-Computer -DomainName "corp.kudzaishelab.local" -NewName "CLIENT01" `
+  -Credential "KUDZAISHELAB\adm-kudzaishe" -Restart
+
+Get-ADComputer CLIENT01 |
+  Move-ADObject -TargetPath "OU=Workstations,OU=Computers,OU=Corp,DC=corp,DC=kudzaishelab,DC=local"
+```
+
+The first domain logon as a Phase 2 user (`tmoyo`) forced a password change, confirming the provisioning rules work end to end.
+
+![CLIENT01 joined to the domain](screenshots/02-client01-domain-joined.png)
+![CLIENT01 in the Workstations OU](screenshots/03-client01-workstations-ou.png)
+
+### 4. Domain password and lockout policy
+
+Edited the **Default Domain Policy** → Computer Configuration → Policies → Windows Settings → Security Settings → **Account Policies**:
+
+- **Password Policy:** minimum length 12, complexity enabled, maximum age 90 days, history 24
+- **Account Lockout Policy:** threshold 5 attempts, duration 15 minutes, reset counter after 15 minutes
+
+Then a **fine-grained password policy** gives admins stricter rules than everyone else:
+
+```powershell
+New-ADFineGrainedPasswordPolicy -Name "Admins-PSO" -Precedence 10 `
+  -MinPasswordLength 15 -ComplexityEnabled $true -LockoutThreshold 3 -PasswordHistoryCount 24
+Add-ADFineGrainedPasswordPolicySubject -Identity "Admins-PSO" -Subjects "Domain Admins"
+```
+
+![Default Domain Policy password and lockout settings](screenshots/06-password-lockout-policy.png)
+
+### 5. Workstation hardening
+
+Created **WS - Workstation Hardening** and linked it to the Workstations OU:
+
+| Setting | Location in the editor | Value |
+|---|---|---|
+| All Removable Storage classes: Deny all access | Administrative Templates → System → Removable Storage Access | Enabled |
+| Interactive logon: Machine inactivity limit | Security Settings → Local Policies → Security Options | 600 seconds |
+| Interactive logon: Message title | Security Options | "Authorized Use Only" |
+| Interactive logon: Message text | Security Options | "This system is for authorized KudzaisheLab users only. Activity may be monitored." |
+
+![WS - Workstation Hardening linked to the Workstations OU](screenshots/04-gpo-linked-workstations.png)
+![WS - Workstation Hardening settings report](screenshots/05-ws-hardening-settings.png)
+
+### 6. Restrict Control Panel by department
+
+Created **USR - Restrict Control Panel** (User Configuration → Administrative Templates → Control Panel → **Prohibit access to Control Panel and PC settings**) and linked it to the **Finance, HR and Sales** OUs. **IT is deliberately excluded**, because IT staff need these tools.
+
+Linking one GPO to several OUs means one place to change the setting for every department it covers.
+
+![USR - Restrict Control Panel linked to HR](screenshots/07-control-panel-gpo-linked.png)
+
+---
+
+## Verification
+
+| Check | How | Result |
+|---|---|---|
+| Client addressing | `ipconfig /all` on CLIENT01 | IP from the `10.0.10.100–200` scope, DNS `10.0.10.10` |
+| Domain membership | System Properties | Member of `corp.kudzaishelab.local` |
+| Policies applied | `gpupdate /force`, then `gpresult /r` | Computer: Default Domain Policy, WS - Workstation Hardening · User: USR - Restrict Control Panel |
+| Logon banner | Restart CLIENT01 | "Authorized Use Only" shown before the logon screen |
+| Control Panel block | Log on as `tmoyo` (Finance), open Control Panel | Blocked by administrator |
+| IT unaffected | Log on as `jcarter` (IT), open Control Panel | Opens normally |
+| Admin password policy | `Get-ADUserResultantPasswordPolicy adm-kudzaishe` | Returns `Admins-PSO` |
+
+![Logon banner shown before sign-in](screenshots/08-logon-banner.png)
+![Control Panel blocked for a Finance user](screenshots/09-control-panel-blocked.png)
+![gpresult showing the applied GPOs](screenshots/10-gpresult-applied.png)
+
+---
+
+## Troubleshooting
+
+Phase 3 produced the most real-world troubleshooting of the lab. Each issue is listed with how I found the cause.
+
+| Symptom | Diagnosis | Fix |
+|---|---|---|
+| CLIENT01 showed a black screen at boot | The VM's display adapter was incompatible with the Windows 11 installer | Changed the graphics controller from VBoxSVGA to **VMSVGA** and turned off 3D acceleration |
+| Windows had nowhere to install | Storage settings showed two optical drives and **no virtual hard disk** | Created a 64 GB VDI and attached it to the SATA controller |
+| Client got a `169.254.x.x` address | APIPA: no DHCP answer. DC01 was offline when the client first asked | Started DC01, confirmed the DHCP service and AD authorization, then `ipconfig /release` and `/renew` |
+| `nslookup` timed out | DC01's network profile had reverted to **Public**, so its firewall blocked DNS (the same issue as Phase 1) | Reset the adapter so the profile returned to DomainAuthenticated |
+| Workstation policies never applied | `gpresult` listed only the Default Domain Policy: CLIENT01 was still in the default `Computers` container, outside any OU with a linked GPO | Moved CLIENT01 into the Workstations OU |
+| Control Panel policy missing | The GPO didn't appear in Group Policy Management after the host ran out of disk space mid-session | Recreated it, then confirmed every other GPO via its **Settings** report |
+| Password policy report showed a 7-character minimum and a 90-day **minimum** age | Reviewing the Default Domain Policy **Settings** report: the length change hadn't saved, and 90 days went into *minimum* age instead of *maximum*, which would stop users changing their password for 90 days | Set minimum age to 1 day, maximum age to 90 days and minimum length to 12, then re-checked the report |
+| Group Policy Results Wizard failed with "RPC server is unavailable" | Windows 11's firewall blocks remote management from DC01 by default | Ran `gpresult` locally on CLIENT01 instead |
+| `gpresult /h` returned "does not have RSoP data" | The elevated window ran as Administrator, who had never logged on to CLIENT01 | Added `/user KUDZAISHELAB\tmoyo` to report on a user who had |
+
+**Key takeaway:** Group Policy follows **where an object lives**, not what it's called. When a policy doesn't apply, `gpresult` and the object's OU are the first two things to check.
+
+---
+
+## Scripts
+
+The lab was configured mainly through the GUI. These scripts reproduce the same configuration in PowerShell, so it can be rebuilt quickly.
+
+| File | Purpose |
+|---|---|
+| [`01-join-domain.ps1`](scripts/01-join-domain.ps1) | Network checks, domain join, and moving CLIENT01 into the Workstations OU |
+| [`02-password-policies.ps1`](scripts/02-password-policies.ps1) | Domain password and lockout policy, plus the Admins-PSO fine-grained policy |
+| [`03-create-gpos.ps1`](scripts/03-create-gpos.ps1) | Creates and links WS - Workstation Hardening and USR - Restrict Control Panel |
+| [`04-verify-on-client.ps1`](scripts/04-verify-on-client.ps1) | Forces a policy refresh and produces `gpresult` reports |
 
 ---
 
 ## Skills demonstrated
 
-<div align="center">
+Windows 11 deployment · domain join and computer object management · Group Policy design, linking and scoping · password and account lockout policy · fine-grained password policies · endpoint hardening · `gpupdate` / `gpresult` troubleshooting · DHCP and DNS diagnosis
 
-**Infrastructure**
-
-![Windows Server 2022](https://img.shields.io/badge/Windows_Server_2022-0078D4?style=flat-square&logo=data:image/svg%2Bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPHBhdGggIGQ9Ik02Ny4zMjggNjcuMzMxaDYwLjY2OVYxMjhINjcuMzI4em0tNjcuMzI1IDBoNjAuNjY5VjEyOEguMDAzek02Ny4zMjggMGg2MC42Njl2NjAuNjY5SDY3LjMyOHpNLjAwMyAwaDYwLjY2OXY2MC42NjlILjAwM3oiLz48L3N2Zz4K)
-![DNS](https://img.shields.io/badge/DNS-0078D4?style=flat-square)
-![DHCP](https://img.shields.io/badge/DHCP-0078D4?style=flat-square)
-![Virtual networking](https://img.shields.io/badge/Virtual_networking-0078D4?style=flat-square)
-![PowerShell](https://img.shields.io/badge/PowerShell_automation-0078D4?style=flat-square&logo=data:image/svg%2Bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWw6c3BhY2U9InByZXNlcnZlIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTI0LjkxMiAxOS4zNThjLS45NjItMS4xOTktMi40MjItMS44NTgtNC4xMTEtMS44NThoLTkyLjYxYy0zLjM5NyAwLTYuNjY1IDIuNjQyLTcuNDQ0IDYuMDE1TDIuMTYyIDEwNC4wMjJjLS4zOTYgMS43MTEtLjA1OCAzLjM5NC45MjYgNC42MTkuOTYzIDEuMTk5IDIuNDIzIDEuODU4IDQuMTExIDEuODU4di4wMDFIOTkuODFjMy4zOTYgMCA2LjY2NS0yLjY0MyA3LjQ0My02LjAxNmwxOC41ODYtODAuNTA4Yy4zOTUtMS43MTEuMDU3LTMuMzk1LS45MjctNC42MTh6bS05OC41ODkgNzcuMTdjLTEuNzQzLTIuMzk3LTEuMzIzLTUuNjczLjk0LTcuMzE4bDM3LjM3OS0yNy4wNjd2LS41NTZMNDEuMTU3IDM2LjYwM2MtMS45MTYtMi4wMzgtMS43MTYtNS4zMzMuNDQ1LTcuMzYxIDIuMTYyLTIuMDI3IDUuNDY2LTIuMDE5IDcuMzgyLjAxOWwyOC4xOCAyOS45NzljMS42IDEuNzAyIDEuNzE4IDQuMjc5LjQ1NyA2LjI2NC0uMzg0Ljc3NC0xLjE4MiAxLjYyOC0yLjU5MyAyLjYxOGwtNDEuNDUgMjkuNzY5Yy0yLjI2MyAxLjY0NC01LjUxMiAxLjAzNC03LjI1NS0xLjM2M3ptNTkuNTQzLjUzOEg2My41MzJjLTIuNTk3IDAtNC43MDItMi4wODItNC43MDItNC42NXMyLjEwNS00LjY1IDQuNzAyLTQuNjVoMjIuMzMzYzIuNTk3IDAgNC43MDIgMi4wODIgNC43MDIgNC42NXMtMi4xMDQgNC42NS00LjcwMSA0LjY1eiIgY2xpcC1ydWxlPSJldmVub2RkIi8%2BPC9zdmc%2BCg%3D%3D)
-
-**Identity and access**
-
-![Active Directory DS](https://img.shields.io/badge/Active_Directory_DS-8250DF?style=flat-square)
-![RBAC and AGDLP](https://img.shields.io/badge/RBAC_and_AGDLP-8250DF?style=flat-square)
-![Identity lifecycle](https://img.shields.io/badge/Identity_lifecycle_JML-8250DF?style=flat-square)
-![Least privilege](https://img.shields.io/badge/Least_privilege-8250DF?style=flat-square)
-![Delegation](https://img.shields.io/badge/Delegated_administration-8250DF?style=flat-square)
-
-**Security and operations**
-
-![Group Policy](https://img.shields.io/badge/Group_Policy_hardening-2EA043?style=flat-square)
-![Audit policy](https://img.shields.io/badge/Advanced_audit_policy-2EA043?style=flat-square)
-![Event logs](https://img.shields.io/badge/Event_log_analysis-2EA043?style=flat-square)
-![Troubleshooting](https://img.shields.io/badge/Systematic_troubleshooting-2EA043?style=flat-square)
-
-**Governance and compliance**
-
-![NIST](https://img.shields.io/badge/NIST_SP_800--53-BF8700?style=flat-square)
-![CIS](https://img.shields.io/badge/CIS_Controls_v8-BF8700?style=flat-square)
-![Access reviews](https://img.shields.io/badge/Access_review_evidence-BF8700?style=flat-square)
-![Documentation](https://img.shields.io/badge/Audit--ready_documentation-BF8700?style=flat-square)
-
-</div>
-
-<details>
-<summary><b>View GRC control mapping</b></summary>
-
-<br/>
-
-- **Joiner / mover / leaver process** → NIST AC-2 Account Management · CIS 5 Account Management
-- **Least privilege and helpdesk delegation** → NIST AC-6 Least Privilege · CIS 6 Access Control Management
-- **Separate privileged admin accounts** → NIST AC-6(5) Privileged Accounts · CIS 5.4 Restrict Admin Privileges
-- **Password, lockout and fine-grained policy** → NIST IA-5 Authenticator Management, AC-7 Unsuccessful Logon Attempts · CIS 5.2 Use Unique Passwords
-- **Advanced audit policy and event review** → NIST AU-2 Event Logging, AU-6 Audit Review · CIS 8 Audit Log Management
-- **Workstation hardening via Group Policy** → NIST CM-6 Configuration Settings · CIS 4 Secure Configuration
-
-</details>
-
-<details>
-<summary><b>View repository structure</b></summary>
-
-<br/>
-
-```
-AD-Enterprise-Home-Lab/
-├── README.md                     ← you are here
-├── phase-1-foundation/
-│   ├── README.md                 ← lab foundation and domain controller
-│   └── screenshots/
-├── phase-2-identity/
-│   ├── README.md                 ← identity structure
-│   ├── scripts/                  ← PowerShell scripts and users.csv
-│   └── screenshots/
-└── phase-3-group-policy/
-    ├── README.md                 ← endpoint integration and Group Policy
-    ├── scripts/                  ← domain join, password policy and GPO scripts
-    └── screenshots/
-```
-
-New phase folders are added as each write-up is published.
-
-</details>
+**GRC alignment:** NIST IA-5 Authenticator Management · NIST AC-7 Unsuccessful Logon Attempts · NIST AC-8 System Use Notification · NIST AC-11 Device Lock · NIST MP-7 Media Use · NIST CM-6 Configuration Settings · CIS Control 4 Secure Configuration · CIS 5.2 Use Unique Passwords
 
 ---
 
-<div align="center">
-
-## Open to opportunities
-
-**IAM Engineer** · **GRC Analyst** · **Cybersecurity Analyst** · **SOC Analyst** · **Cloud Security Engineer** · **IT Support / Systems Administrator**
-
-New York / New Jersey · Remote
-
-<br/>
-
-**Kudzaishe Rutsinga** · M.S. Cybersecurity, Yeshiva University
-*CompTIA Security+ · ISC2 CC · Microsoft AZ-900*
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPHBhdGggZD0iTTExNiAzSDEyYTguOTEgOC45MSAwIDAwLTkgOC44djEwNC40MmE4LjkxIDguOTEgMCAwMDkgOC43OGgxMDRhOC45MyA4LjkzIDAgMDA5LTguODFWMTEuNzdBOC45MyA4LjkzIDAgMDAxMTYgM3pNMzkuMTcgMTA3SDIxLjA2VjQ4LjczaDE4LjExem0tOS02Ni4yMWExMC41IDEwLjUgMCAxMTEwLjQ5LTEwLjUgMTAuNSAxMC41IDAgMDEtMTAuNTQgMTAuNDh6TTEwNyAxMDdIODguODlWNzguNjVjMC02Ljc1LS4xMi0xNS40NC05LjQxLTE1LjQ0cy0xMC44NyA3LjM2LTEwLjg3IDE1VjEwN0g1MC41M1Y0OC43M2gxNy4zNnY4aC4yNGMyLjQyLTQuNTggOC4zMi05LjQxIDE3LjEzLTkuNDFDMTAzLjYgNDcuMjggMTA3IDU5LjM1IDEwNyA3NXoiLz48L3N2Zz4%3D)](https://www.linkedin.com/in/kudzaishe-rutsinga/)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-2EA043?style=for-the-badge&logo=googlechrome&logoColor=white)](https://kudzaishe-cloud.github.io)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Kudzaishe-Cloud)
-
-</div>
+**← [Phase 2: Identity structure](../phase-2-identity/)** · **Next → [Phase 4: Access control](../phase-4-access-control/)**
