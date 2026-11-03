@@ -14,14 +14,16 @@
 ![GRC](https://img.shields.io/badge/GRC-NIST_800--53_and_CIS_v8-8250DF?style=for-the-badge)
 
 ![Lab](https://img.shields.io/badge/Lab_build-Complete-2EA043?style=flat-square)
-![Docs](https://img.shields.io/badge/Write--ups-4_of_5_published-D29922?style=flat-square)
+![Docs](https://img.shields.io/badge/Write--ups-5_of_5_published-2EA043?style=flat-square)
+![Scripts](https://img.shields.io/badge/PowerShell_scripts-20-5391FE?style=flat-square)
+![Evidence](https://img.shields.io/badge/Screenshots-36-30363D?style=flat-square)
 
 <br/>
 
 <a href="#about-this-project"><img src="https://img.shields.io/badge/About-30363D?style=for-the-badge" alt="About"/></a>
 <a href="#architecture"><img src="https://img.shields.io/badge/Architecture-30363D?style=for-the-badge" alt="Architecture"/></a>
 <a href="#the-five-phases"><img src="https://img.shields.io/badge/Phases-30363D?style=for-the-badge" alt="Phases"/></a>
-<a href="#highlights"><img src="https://img.shields.io/badge/Highlights-30363D?style=for-the-badge" alt="Highlights"/></a>
+<a href="#evidence-gallery"><img src="https://img.shields.io/badge/Evidence-30363D?style=for-the-badge" alt="Evidence"/></a>
 <a href="#skills-demonstrated"><img src="https://img.shields.io/badge/Skills-30363D?style=for-the-badge" alt="Skills"/></a>
 <a href="#open-to-opportunities"><img src="https://img.shields.io/badge/Contact-30363D?style=for-the-badge" alt="Contact"/></a>
 
@@ -40,6 +42,14 @@ It mirrors what IT and IAM teams handle every day:
 - **Enforce** security policy on every endpoint
 - **Control** who can reach which data, and prove it
 - **Manage** the full joiner–mover–leaver lifecycle, with an audit trail for every change
+
+<div align="center">
+
+<br/>
+
+**5** phases &nbsp;·&nbsp; **20+** identities &nbsp;·&nbsp; **3** Group Policies &nbsp;·&nbsp; **6** identity scenarios &nbsp;·&nbsp; **8** audited Event IDs &nbsp;·&nbsp; **20** PowerShell scripts
+
+</div>
 
 ---
 
@@ -61,14 +71,24 @@ flowchart LR
 <div align="center">
 
 **Domain** `corp.kudzaishelab.local` · **Network** `10.0.10.0/24` · **Identities** 20+ users across IT, HR, Finance and Sales
+**Host** Windows 11 laptop · Oracle VirtualBox · 32 GB RAM
 
 </div>
+
+### How access is built
+
+Every permission in the lab follows one chain, so access is granted, changed and removed in one place: group membership.
+
+```mermaid
+flowchart LR
+    U["User<br/>tmoyo"] --> G["Global role group<br/>GG-Finance"] --> D["Domain Local resource group<br/>DL-FinanceShare-Modify"] --> P["Permission<br/>Finance share · Modify"]
+```
 
 ---
 
 ## The five phases
 
-The full lab is built and tested. Each phase's write-up is published as it's finished.
+The full lab is built, tested and documented. Each phase builds on the one before it and has its own write-up, scripts and screenshots.
 
 **Phase 1 · [Lab foundation and domain controller](phase-1-foundation/)** ✅
 Isolated network, domain controller promotion, DNS zones and forwarders, DHCP authorization and scopes.
@@ -86,9 +106,9 @@ Domain-joined Windows 11 workstation, password and lockout policy, fine-grained 
 Group-based NTFS and share permissions following the AGDLP model, proven with least-privilege access tests.
 `▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
 
-**Phase 5 · IAM lifecycle and auditing**
+**Phase 5 · [IAM lifecycle and auditing](phase-5-iam-lifecycle/)** ✅
 Joiner, mover and leaver processes, helpdesk delegation, lockout recovery, deleted-object restore, and security auditing.
-`▰▰▰▰▰▰▰▱▱▱` **70%** · Built · Write-up in progress
+`▰▰▰▰▰▰▰▰▰▰` **100%** · Built · Documented · Published
 
 ---
 
@@ -97,9 +117,34 @@ Joiner, mover and leaver processes, helpdesk delegation, lockout recovery, delet
 - **20 users provisioned in seconds** from a CSV with PowerShell, each placed in the right OU and role group automatically
 - **Least privilege, proven:** Finance can edit its share, HR is denied, and one group change grants HR read-only access, with no folder permissions touched
 - **Six identity scenarios run end to end:** joiner, mover, leaver, helpdesk delegation, account lockout and deleted-user restore
+- **Delegation tested both ways:** the helpdesk could reset a password from a workstation, but was denied when it tried to delete a user
 - **Three Group Policies enforced and verified** with `gpresult`: domain password and lockout rules, workstation hardening, and a departmental Control Panel restriction
-- **Every change leaves evidence:** account creation, group changes, disables and lockouts captured in the Security log (Event IDs 4720, 4728, 4725, 4740)
+- **Every change leaves evidence:** account creation, group changes, disables, failed sign-ins and lockouts captured in the Security log (Event IDs 4720, 4728, 4725, 4771, 4740)
 - **Real troubleshooting, documented:** a domain controller network profile blocking client DNS, a VM with no attached disk, and policies missing their target OU
+
+---
+
+## Evidence gallery
+
+<div align="center">
+
+<a href="phase-1-foundation/"><img src="assets/gallery/1-domain-controller.png" width="32%" alt="Phase 1: domain created and AD Recycle Bin enabled"/></a> <a href="phase-2-identity/"><img src="assets/gallery/2-ou-structure.png" width="32%" alt="Phase 2: enterprise OU structure"/></a> <a href="phase-3-group-policy/"><img src="assets/gallery/3-logon-banner.png" width="32%" alt="Phase 3: logon banner enforced by Group Policy"/></a>
+
+<a href="phase-4-access-control/"><img src="assets/gallery/4-hr-access-denied.png" width="32%" alt="Phase 4: HR user denied access to the Finance share"/></a> <a href="phase-5-iam-lifecycle/"><img src="assets/gallery/5-helpdesk-delete-denied.png" width="32%" alt="Phase 5: helpdesk denied when deleting a user"/></a> <a href="phase-5-iam-lifecycle/"><img src="assets/gallery/6-security-log-evidence.png" width="32%" alt="Phase 5: Security log filtered to lifecycle Event IDs"/></a>
+
+<sub>Click any image to open that phase's full write-up.</sub>
+
+</div>
+
+---
+
+## Lessons learned
+
+- **When something breaks in AD, check DNS first.** The hardest bug in the lab was a domain controller whose network was labelled *Public*, which silently blocked every client DNS request.
+- **A policy is only as good as its link.** Group Policy did nothing until the workstation was moved out of the default Computers container into an OU where the policy was linked.
+- **Verify, don't assume.** Reviewing the policy report caught a 90-day value in minimum password age instead of maximum.
+- **Groups make access auditable.** With AGDLP, granting, removing and reviewing access never means editing a folder.
+- **Turn on auditing before you need it.** Events that weren't audited can't be investigated later.
 
 ---
 
@@ -110,9 +155,10 @@ Joiner, mover and leaver processes, helpdesk delegation, lockout recovery, delet
 **Infrastructure**
 
 ![Windows Server 2022](https://img.shields.io/badge/Windows_Server_2022-0078D4?style=flat-square&logo=data:image/svg%2Bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPHBhdGggIGQ9Ik02Ny4zMjggNjcuMzMxaDYwLjY2OVYxMjhINjcuMzI4em0tNjcuMzI1IDBoNjAuNjY5VjEyOEguMDAzek02Ny4zMjggMGg2MC42Njl2NjAuNjY5SDY3LjMyOHpNLjAwMyAwaDYwLjY2OXY2MC42NjlILjAwM3oiLz48L3N2Zz4K)
+![Windows 11](https://img.shields.io/badge/Windows_11_client-0078D4?style=flat-square)
 ![DNS](https://img.shields.io/badge/DNS-0078D4?style=flat-square)
 ![DHCP](https://img.shields.io/badge/DHCP-0078D4?style=flat-square)
-![Virtual networking](https://img.shields.io/badge/Virtual_networking-0078D4?style=flat-square)
+![VirtualBox](https://img.shields.io/badge/VirtualBox_networking-0078D4?style=flat-square&logo=virtualbox&logoColor=white)
 ![PowerShell](https://img.shields.io/badge/PowerShell_automation-0078D4?style=flat-square&logo=data:image/svg%2Bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWw6c3BhY2U9InByZXNlcnZlIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTI0LjkxMiAxOS4zNThjLS45NjItMS4xOTktMi40MjItMS44NTgtNC4xMTEtMS44NThoLTkyLjYxYy0zLjM5NyAwLTYuNjY1IDIuNjQyLTcuNDQ0IDYuMDE1TDIuMTYyIDEwNC4wMjJjLS4zOTYgMS43MTEtLjA1OCAzLjM5NC45MjYgNC42MTkuOTYzIDEuMTk5IDIuNDIzIDEuODU4IDQuMTExIDEuODU4di4wMDFIOTkuODFjMy4zOTYgMCA2LjY2NS0yLjY0MyA3LjQ0My02LjAxNmwxOC41ODYtODAuNTA4Yy4zOTUtMS43MTEuMDU3LTMuMzk1LS45MjctNC42MTh6bS05OC41ODkgNzcuMTdjLTEuNzQzLTIuMzk3LTEuMzIzLTUuNjczLjk0LTcuMzE4bDM3LjM3OS0yNy4wNjd2LS41NTZMNDEuMTU3IDM2LjYwM2MtMS45MTYtMi4wMzgtMS43MTYtNS4zMzMuNDQ1LTcuMzYxIDIuMTYyLTIuMDI3IDUuNDY2LTIuMDE5IDcuMzgyLjAxOWwyOC4xOCAyOS45NzljMS42IDEuNzAyIDEuNzE4IDQuMjc5LjQ1NyA2LjI2NC0uMzg0Ljc3NC0xLjE4MiAxLjYyOC0yLjU5MyAyLjYxOGwtNDEuNDUgMjkuNzY5Yy0yLjI2MyAxLjY0NC01LjUxMiAxLjAzNC03LjI1NS0xLjM2M3ptNTkuNTQzLjUzOEg2My41MzJjLTIuNTk3IDAtNC43MDItMi4wODItNC43MDItNC42NXMyLjEwNS00LjY1IDQuNzAyLTQuNjVoMjIuMzMzYzIuNTk3IDAgNC43MDIgMi4wODIgNC43MDIgNC42NXMtMi4xMDQgNC42NS00LjcwMSA0LjY1eiIgY2xpcC1ydWxlPSJldmVub2RkIi8%2BPC9zdmc%2BCg%3D%3D)
 
 **Identity and access**
@@ -122,12 +168,15 @@ Joiner, mover and leaver processes, helpdesk delegation, lockout recovery, delet
 ![Identity lifecycle](https://img.shields.io/badge/Identity_lifecycle_JML-8250DF?style=flat-square)
 ![Least privilege](https://img.shields.io/badge/Least_privilege-8250DF?style=flat-square)
 ![Delegation](https://img.shields.io/badge/Delegated_administration-8250DF?style=flat-square)
+![Privileged accounts](https://img.shields.io/badge/Privileged_account_separation-8250DF?style=flat-square)
 
 **Security and operations**
 
 ![Group Policy](https://img.shields.io/badge/Group_Policy_hardening-2EA043?style=flat-square)
 ![Audit policy](https://img.shields.io/badge/Advanced_audit_policy-2EA043?style=flat-square)
 ![Event logs](https://img.shields.io/badge/Event_log_analysis-2EA043?style=flat-square)
+![Lockout investigation](https://img.shields.io/badge/Lockout_investigation-2EA043?style=flat-square)
+![Recovery](https://img.shields.io/badge/AD_Recycle_Bin_recovery-2EA043?style=flat-square)
 ![Troubleshooting](https://img.shields.io/badge/Systematic_troubleshooting-2EA043?style=flat-square)
 
 **Governance and compliance**
@@ -144,10 +193,13 @@ Joiner, mover and leaver processes, helpdesk delegation, lockout recovery, delet
 
 <br/>
 
-- **Joiner / mover / leaver process** → NIST AC-2 Account Management · CIS 5 Account Management
+- **Joiner / mover / leaver process** → NIST AC-2 Account Management, PS-4 Personnel Termination, PS-5 Personnel Transfer · CIS 5 Account Management
+- **Group-based file permissions** → NIST AC-3 Access Enforcement · CIS 3.3 Configure Data Access Control Lists
 - **Least privilege and helpdesk delegation** → NIST AC-6 Least Privilege · CIS 6 Access Control Management
 - **Separate privileged admin accounts** → NIST AC-6(5) Privileged Accounts · CIS 5.4 Restrict Admin Privileges
 - **Password, lockout and fine-grained policy** → NIST IA-5 Authenticator Management, AC-7 Unsuccessful Logon Attempts · CIS 5.2 Use Unique Passwords
+- **Logon banner and screen lock** → NIST AC-8 System Use Notification, AC-11 Device Lock · CIS 4.3 Automatic Session Locking
+- **USB storage blocked** → NIST MP-7 Media Use
 - **Advanced audit policy and event review** → NIST AU-2 Event Logging, AU-6 Audit Review · CIS 8 Audit Log Management
 - **Workstation hardening via Group Policy** → NIST CM-6 Configuration Settings · CIS 4 Secure Configuration
 
@@ -161,6 +213,7 @@ Joiner, mover and leaver processes, helpdesk delegation, lockout recovery, delet
 ```
 AD-Enterprise-Home-Lab/
 ├── README.md                     ← you are here
+├── assets/gallery/               ← images used on this page
 ├── phase-1-foundation/
 │   ├── README.md                 ← lab foundation and domain controller
 │   └── screenshots/
@@ -172,15 +225,40 @@ AD-Enterprise-Home-Lab/
 │   ├── README.md                 ← endpoint integration and Group Policy
 │   ├── scripts/                  ← domain join, password policy and GPO scripts
 │   └── screenshots/
-└── phase-4-access-control/
-    ├── README.md                 ← group-based file access control
-    ├── scripts/                  ← share, permission and access review scripts
+├── phase-4-access-control/
+│   ├── README.md                 ← group-based file access control
+│   ├── scripts/                  ← share, permission and access review scripts
+│   └── screenshots/
+└── phase-5-iam-lifecycle/
+    ├── README.md                 ← identity lifecycle and security auditing
+    ├── scripts/                  ← JML, delegation, lockout, restore and audit scripts
     └── screenshots/
 ```
 
-New phase folders are added as each write-up is published.
+</details>
+
+<details>
+<summary><b>Running the scripts</b></summary>
+
+<br/>
+
+- Read the phases in order: each one depends on the one before it.
+- Run scripts on **DC01** in PowerShell as Administrator, unless the script header says otherwise.
+- Passwords are always prompted with `Read-Host -AsSecureString`, never stored in the scripts.
+- The lab was built mainly through the GUI; the scripts reproduce the same configuration so it can be rebuilt quickly.
 
 </details>
+
+---
+
+## What's next
+
+This lab is the on-premises foundation. The natural next steps extend it the way a real organisation would:
+
+- **Hybrid identity** · sync AD to Microsoft Entra ID with Entra Connect, and apply Conditional Access and MFA
+- **SIEM integration** · forward Security log events to Microsoft Sentinel and build alerts for lockouts and privileged group changes
+- **Privileged access** · Windows LAPS for local admin passwords and a tiered admin model
+- **Access reviews** · scheduled reporting of group membership for manager sign-off
 
 ---
 
@@ -200,5 +278,9 @@ New York / New Jersey · Remote
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPHBhdGggZD0iTTExNiAzSDEyYTguOTEgOC45MSAwIDAwLTkgOC44djEwNC40MmE4LjkxIDguOTEgMCAwMDkgOC43OGgxMDRhOC45MyA4LjkzIDAgMDA5LTguODFWMTEuNzdBOC45MyA4LjkzIDAgMDAxMTYgM3pNMzkuMTcgMTA3SDIxLjA2VjQ4LjczaDE4LjExem0tOS02Ni4yMWExMC41IDEwLjUgMCAxMTEwLjQ5LTEwLjUgMTAuNSAxMC41IDAgMDEtMTAuNTQgMTAuNDh6TTEwNyAxMDdIODguODlWNzguNjVjMC02Ljc1LS4xMi0xNS40NC05LjQxLTE1LjQ0cy0xMC44NyA3LjM2LTEwLjg3IDE1VjEwN0g1MC41M1Y0OC43M2gxNy4zNnY4aC4yNGMyLjQyLTQuNTggOC4zMi05LjQxIDE3LjEzLTkuNDFDMTAzLjYgNDcuMjggMTA3IDU5LjM1IDEwNyA3NXoiLz48L3N2Zz4%3D)](https://www.linkedin.com/in/kudzaishe-rutsinga/)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Visit-2EA043?style=for-the-badge&logo=googlechrome&logoColor=white)](https://kudzaishe-cloud.github.io)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Kudzaishe-Cloud)
+
+<br/>
+
+<sub>If this project was useful, a ⭐ helps others find it.</sub>
 
 </div>
